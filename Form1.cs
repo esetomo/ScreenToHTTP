@@ -32,17 +32,60 @@ namespace ScreenToHTTP
             listener.BeginGetContext(OnGetContext, listener);
         }
 
+        delegate void Action();
+
         private void OnRequest(HttpListenerContext context)
         {
             HttpListenerRequest req = context.Request;
             HttpListenerResponse res = context.Response;
 
-            res.ContentType = "image/png";
-            pictureBox1.Image.Save(res.OutputStream, ImageFormat.Png);
+            if (req.Url.AbsolutePath == "/")
+            {
+                WritePage(res);
+            }
+            else
+            {
+                res.ContentType = "image/png";
+                Invoke((Action)(() => pictureBox1.Image.Save(res.OutputStream, ImageFormat.Png)));
+                res.Close();
+            }
+        }
+
+        private void WritePage(HttpListenerResponse res)
+        {
+            using (StreamWriter writer = new StreamWriter(res.OutputStream))
+            {
+                writer.Write(@"
+                    <!DOCTYPE html>
+                    <html>
+                      <head>
+                        <title>ScreenToHttp</title>
+                        <style>
+                          html { overflow: hidden; }
+                          body { margin: 0; overflow: hidden; }
+                        </style>
+                        <script>
+                            function update(){
+                                var img = document.getElementById('screen');
+                                img.src = '/screen.png?' + (new Date()).getTime();
+                            }
+                        </script>
+                      </head>
+                      <body onload='setInterval(update, 1000)'>
+                        <img id='screen' src='/screen.png' alt='Screen Image'>
+                      </body>
+                    </html>
+                ");
+            }
             res.Close();
         }
 
-        private void buttonUpdate_Click(object sender, EventArgs e)
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("http://localhost:10158/");
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
         {
             int x = int.Parse(textBoxX.Text);
             int y = int.Parse(textBoxY.Text);
@@ -56,9 +99,9 @@ namespace ScreenToHTTP
             pictureBox1.Image = bmp;
         }
 
-        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        private void Form1_Load(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start("http://localhost:10158/");
+            timer1.Start();
         }
     }
 }
