@@ -53,7 +53,10 @@ namespace ScreenToHTTP
 
         private void WritePage(HttpListenerResponse res)
         {
-            using (StreamWriter writer = new StreamWriter(res.OutputStream))
+            res.ContentEncoding = Encoding.UTF8;
+            res.ContentType = "text/html";
+
+            using (StreamWriter writer = new StreamWriter(res.OutputStream, Encoding.UTF8))
             {
                 writer.Write(@"
                     <!DOCTYPE html>
@@ -87,10 +90,15 @@ namespace ScreenToHTTP
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            int x = int.Parse(textBoxX.Text);
-            int y = int.Parse(textBoxY.Text);
-            int width = int.Parse(textBoxWidth.Text);
-            int height = int.Parse(textBoxHeight.Text);
+            int x = 0;
+            int y = 0;
+            int width = 512;
+            int height = 512;
+
+            int.TryParse(textBoxX.Text, out x);
+            int.TryParse(textBoxY.Text, out y);
+            int.TryParse(textBoxWidth.Text, out width);
+            int.TryParse(textBoxHeight.Text, out height);
 
             Bitmap bmp = new Bitmap(width, height);
             Graphics g = Graphics.FromImage(bmp);

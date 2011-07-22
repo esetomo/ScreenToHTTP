@@ -104,7 +104,7 @@
             this.textBoxX.Name = "textBoxX";
             this.textBoxX.Size = new System.Drawing.Size(50, 19);
             this.textBoxX.TabIndex = 1;
-            this.textBoxX.Text = "0";
+            this.textBoxX.Text = "26";
             // 
             // textBoxY
             // 
@@ -113,7 +113,7 @@
             this.textBoxY.Name = "textBoxY";
             this.textBoxY.Size = new System.Drawing.Size(50, 19);
             this.textBoxY.TabIndex = 3;
-            this.textBoxY.Text = "0";
+            this.textBoxY.Text = "72";
             // 
             // textBoxWidth
             // 
